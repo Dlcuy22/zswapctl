@@ -1,4 +1,4 @@
-zswapctl
+/zswapctl
 upstream/
 *.exe
 *.test
