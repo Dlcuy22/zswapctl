@@ -1,0 +1,14 @@
+[Unit]
+Description=Command-line tool to control the zswap kernel module options
+Documentation=https://github.com/xvitaly/zswap-cli
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/zswapctl --config /etc/zswapctl/zswapctl.conf
+ExecStop=/usr/bin/zswapctl --enabled N
+RemainAfterExit=yes
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
