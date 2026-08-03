@@ -24,6 +24,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/zswap-go/zswapctl/internal/config"
+	"github.com/zswap-go/zswapctl/internal/service"
 	"github.com/zswap-go/zswapctl/internal/sysinfo"
 	"github.com/zswap-go/zswapctl/internal/sysutil"
 	"github.com/zswap-go/zswapctl/internal/version"
@@ -35,6 +36,7 @@ var (
 	flagEnv     bool
 	flagStats   int
 	flagVerbose bool
+	flagInstall bool
 
 	flagEnabled                    string
 	flagSameFilledPagesEnabled     string
@@ -64,6 +66,7 @@ func main() {
 	rootCmd.Flags().BoolVar(&flagEnv, "env", false, "get options from the environment variables instead of the cmdline")
 	rootCmd.Flags().IntVar(&flagStats, "stats", -1, "show statistics and current settings of ZSwap kernel module (0=all, 1=settings, 2=summary, 3=debug)")
 	rootCmd.Flags().BoolVar(&flagVerbose, "verbose", false, "enable verbose mode to display additional information")
+	rootCmd.Flags().BoolVar(&flagInstall, "install", false, "install built-in config and systemd service, then enable and start zswapctl")
 
 	rootCmd.Flags().StringVarP(&flagEnabled, "enabled", "e", "", "enable or disable the ZSwap kernel module")
 	rootCmd.Flags().StringVarP(&flagSameFilledPagesEnabled, "same_filled_pages_enabled", "s", "", "enable or disable memory pages deduplication")
@@ -102,8 +105,12 @@ func runRoot(cmd *cobra.Command, args []string) error {
 		cmd.Flags().Changed("exclusive_loads") ||
 		cmd.Flags().Changed("shrinker_enabled")
 
-	if !hasCmdLineFlags && !flagEnv && flagConfig == "" && flagStats < 0 {
+	if !hasCmdLineFlags && !flagEnv && flagConfig == "" && flagStats < 0 && !flagInstall {
 		return cmd.Help()
+	}
+
+	if flagInstall {
+		return service.Install()
 	}
 
 	if flagStats >= 0 {
