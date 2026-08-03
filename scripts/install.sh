@@ -58,7 +58,12 @@ fi
 
 echo "zswapctl binary successfully installed."
 
-read -p "Do you want to apply default configuration? (y/n): " response
+if [ -e /dev/tty ]; then
+    read -p "Do you want to apply default configuration? (y/n): " response </dev/tty
+else
+    response="n"
+fi
+
 case "$response" in
     [yY][eE][sS]|[yY])
         if [ "$(id -u)" -eq 0 ]; then
